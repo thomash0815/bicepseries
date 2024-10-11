@@ -1,0 +1,19 @@
+{
+    "moduleAliases": {
+      "br": {
+        "MyBicepRegistry": {
+          "registry": "myacr.azurecr.io"
+        },
+        "MyStorageModule": {
+          "registry": "myacr.azurecr.io",
+          "modulePath": "bicep/modules"
+        }
+      },
+      "ts": {
+        "StorageTempSpecs": {
+          "subscription": "guid here",
+          "resourceGroup": "rg-test"
+        }
+      }
+    }
+  }

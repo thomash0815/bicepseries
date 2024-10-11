@@ -1,0 +1,33 @@
+#1 acr
+#2 template spec
+#3 multi repo in pipeline
+#4 (deployment stacks)
+
+az account show
+az account set --subscription ""
+az login
+
+acrname='myacr'
+
+#neue version nehmen oder --force zum überschreiben
+target="br:${acrname}.azurecr.io/bicep/modules/storage:v1"
+
+az bicep publish --file 'example/modul1/storage.bicep' --target $target
+
+az acr repository list --name $acrname --output table
+
+resourceGroupName="rg-test"
+
+templateFile="Acr/useacr.bicep"
+az deployment group create --resource-group $resourceGroupName --template-file $templateFile
+
+#ts create
+az ts create --resource-group $resourceGroupName --name StorageTempSpec --display-name "StorageTempSpec" --description "description here.." --version 1.0 --template-file example/modul1/storage.bicep
+az ts create --resource-group $resourceGroupName --name Storage --display-name "Storage" --description "description here.." --version 1.0 --template-file example/modul1/storage.bicep
+
+#ts deploy
+tempResId=$(az ts show --resource-group $resourceGroupName --name StorageTempSpec --version 1.0 --query id --output tsv)
+echo $tempResId
+
+az deployment group create --resource-group $resourceGroupName --template-spec $tempResId --parameters storagePrefix=sto001
+
